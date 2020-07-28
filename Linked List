@@ -1,0 +1,254 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+//structure
+typedef struct ListNode{
+	char data[20];
+	struct ListNode* link;
+}listNode;
+
+//head
+typedef struct{
+	listNode* head;
+}linkedList_h;
+
+//creat head
+linkedList_h* createLinkedList_h(void){
+	linkedList_h* L;
+	L = (linkedList_h*)malloc(sizeof(linkedList_h));
+	L -> head = NULL;
+	return L;
+}
+
+void freeLinkedList_h(linkedList_h* L){
+	listNode* p;
+	while(L -> head!=NULL){
+		p = L -> head;
+		L -> head = p->link;
+		free(p);
+	}
+}
+
+int printList(linkedList_h* L){
+	if(L->head == NULL){
+		printf("empty\n");
+		return 0;
+	}
+	else{
+		listNode* p;
+		p = L->head;
+		
+		while(p->link != NULL){
+			printf("%s  >> ", p->data);
+			p = p->link;
+		}
+		printf("%s\n", p->data);
+		return 1;
+	}
+}
+
+void insertFirstNode(linkedList_h* L, char data[20]){
+	listNode* p;
+	listNode* firstnode = malloc(sizeof(listNode));
+	
+	if(L->head == NULL){
+		L->head = firstnode;
+		firstnode->link = NULL;
+		strcpy(firstnode->data, data);
+	}else{
+		p = L->head;
+		L->head = firstnode;
+		firstnode->link = p;
+		strcpy(firstnode->data, data);
+	}
+}
+
+void insertLastNode(linkedList_h* L, char data[20]){
+	listNode* p;
+	listNode* lastNode = malloc(sizeof(listNode));
+	
+	p = L->head;
+	while(1){
+		if(p->link == NULL){
+			p->link = lastNode;
+			lastNode->link = NULL;
+			strcpy(lastNode->data, data);
+			break;
+		}
+		p = p->link;
+	}
+}
+
+listNode* searchNode(linkedList_h* L, char data[20]){
+	listNode* p;
+
+	p = L->head;
+	while(0 !=(strcmp(p->data, data))){
+		p = p->link;
+		if(p == NULL)
+			return NULL;
+	}
+	return p;
+}
+
+listNode* insertMiddleNode(linkedList_h* L, char position[20], char data[20]){
+	listNode* middleNode = malloc(sizeof(listNode));
+	listNode* p_position = searchNode(L, position);
+	if(p_position == NULL){
+		printf("Can't find position\n");
+		return 0;
+	}
+	else {
+		listNode* pre = p_position->link;
+		p_position->link = middleNode;
+		middleNode->link = pre;
+		strcpy(middleNode->data, data);
+		return middleNode;
+	}
+}
+
+int deleteNode(linkedList_h* L, char data[20]){
+	listNode* p;
+	listNode* p_data;
+
+	p = L->head;
+	p_data = searchNode(L, data);
+
+	if(p_data == NULL){
+		printf("There is no data of %s\n", data);
+		return 0;
+	}
+
+	if(p == NULL){
+		printf("empty\n");
+		return 0;
+	}
+	else{
+		while(1){
+			if(p->link == p_data){
+				p->link = p_data->link;
+				free(p_data);
+				break;
+			}
+			p = p->link;
+		}
+		return 1;
+	}
+}
+
+int deleteFirstNode(linkedList_h* L){
+	listNode* p;
+	p = L->head;
+	if(p == NULL){
+		printf("No data");
+		return -1;
+	} else{
+		L->head = p->link;
+		free(p);
+		return 1;
+	}
+}
+
+int deleteLastNode(linkedList_h* L){
+	listNode* p = L->head;
+	listNode* post;
+	if(p == NULL){
+		printf("No data\n");
+		return -1;
+	}
+	if(p->link == NULL){
+		free(p);
+		L->head = NULL;
+		return 0;
+	}
+	else{
+		while(1){
+			post = p;
+			p = p->link;
+			if(p->link == NULL){
+				post->link = NULL;
+				free(p);
+				break;
+			}
+		}
+		return 1;
+	}
+}
+
+int main(){
+	linkedList_h* L;
+	char data[20] = {'0',};
+	char position[20] = {'0',};
+	char selection = 0;
+
+	while(selection != '0'){
+		printf("\n-------------------------------------------------");
+		printf("\n       ** Selection **\n");
+		printf("1. Insert node to the first\n");
+		printf("2. Insert node to the last\n");
+		printf("3. Insert node to Middle\n");
+		printf("4. Delete the first node\n");
+		printf("5. Delete the last node\n");
+		printf("6. Delete the Middle node\n");
+		printf("7. Free Memory\n");
+		printf("8. Print List\n");
+		printf("0. Exit\n");
+		printf("\n[Selection] ");
+		scanf(" %c", &selection);
+		printf("\n---------------------------------------------------\n");
+		if(selection == '1'){
+			strcmp(data, "");
+			printf("Input data : ");
+			scanf("%s", data);
+			insertFirstNode(L, data);
+			printList(L);
+		}
+
+		if(selection == '2'){
+			strcmp(data, "");
+			printf("Input data : ");
+			scanf("%s", data);
+			insertLastNode(L, data);
+			printList(L);
+		}
+
+		if(selection == '3'){
+			strcmp(data, "");
+			strcmp(position, "");
+			printf("Input <position data> <input data> : ");
+			scanf("%s %s", position, data);
+			insertMiddleNode(L, position, data);
+			printList(L);
+		}
+
+		if(selection == '4'){
+			deleteFirstNode(L);
+			printList(L);
+		}
+
+		if(selection == '5'){
+			deleteLastNode(L);
+			printList(L);
+		}
+
+		if(selection == '6'){
+			strcmp(data, "");
+			printf("Input data to delete : ");
+			scanf("%s", data);
+			deleteNode(L, data);
+			printList(L);
+		}
+
+		if(selection == '7'){
+			freeLinkedList_h(L);
+			printList(L);
+		}
+
+		if(selection == '8')
+			printList(L);
+
+		if(selection == '0')
+			return 0;
+	}
+}
